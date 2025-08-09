@@ -1,0 +1,45 @@
+# set( $JASYPT_ENCRYPTOR_PASSWORD = 'JASYPT_ENCRYPTOR_PASSWORD:default-password' )
+#file: noinspection SpringBootApplicationYaml
+spring:
+  profiles:
+    active: dev
+
+# LINUX
+# export JASYPT_ENCRYPTOR_PASSWORD=course-push-secret-key
+# java -jar course-push-app.jar
+# WINDOWS
+# set JASYPT_ENCRYPTOR_PASSWORD=course-push-secret-key
+# java -jar course-push-app.jar
+
+
+jasonlat:
+  ecc:
+    # 是否启用ECC功能
+    enabled: true
+
+    # ECC密钥配置（请替换为您的实际密钥）
+    privateKey: be38fba57a90bcdbd59cdba9df58e511d0105f4e400bec872448be3202e7eaf8
+    publicKeyX: d13d9de5d2cf7578aa427a73eca23aa6335baa2f218c433a972501f42a760e1a
+    publicKeyY: cae8c8fc121bf4f7a4310a7273364b15af5bff70dd1bf603124f8f8f25207c84
+
+    # 用户上下文缓存配置
+    user-context-cache:
+      cache-max-size: 5000        # 最大缓存用户数量
+      cache-expire-minutes: 120   # 缓存过期时间（分钟）
+
+    # 重放攻击防护缓存配置
+    replay-attack:
+      cache:
+        cache-max-size: 1000      # 最大缓存请求数量
+        cache-expire-minutes: 30  # 缓存过期时间（分钟）
+
+    # 唯一请求防护缓存配置
+    unique-request:
+      cache:
+        maximum-size: 10000             # 最大缓存请求数量
+        expire-minutes-after-write: 60  # 写入后过期时间（分钟）
+
+
+
+
+

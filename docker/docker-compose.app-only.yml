@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  ecc-app:
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile
+    container_name: ecc-app
+    ports:
+      - "8089:8089"
+      - "8090:8090"
+    user: "0:0"  # 以root用户启动，让entrypoint脚本处理权限
+    environment:
+      # Spring配置
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-prod}
+      
+      # Jasypt加密密码
+      - JASYPT_ENCRYPTOR_PASSWORD=${JASYPT_ENCRYPTOR_PASSWORD:-lijiaqiang1024@wt1314520}
+      
+      # 数据库配置（连接到外部MySQL）
+      - DB_HOST=${DB_HOST:-localhost}
+      - DB_PORT=${DB_PORT:-3306}
+      - DB_NAME=${DB_NAME:-ecc}
+      - DB_USERNAME=${DB_USERNAME:-root}
+      - DB_PASSWORD=${DB_PASSWORD:-123456}
+      
+      # Redis配置（连接到外部Redis）
+      - REDIS_HOST=${REDIS_HOST:-localhost}
+      - REDIS_PORT=${REDIS_PORT:-6379}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-}
+      - REDIS_DATABASE=${REDIS_DATABASE:-0}
+      
+      # RabbitMQ配置（连接到外部RabbitMQ，如果需要）
+      - RABBITMQ_HOST=${RABBITMQ_HOST:-localhost}
+      - RABBITMQ_PORT=${RABBITMQ_PORT:-5672}
+      - RABBITMQ_USERNAME=${RABBITMQ_USERNAME:-guest}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD:-guest}
+      - RABBITMQ_VIRTUAL_HOST=${RABBITMQ_VIRTUAL_HOST:-/}
+      
+      # 邮件服务配置
+      - MAIL_HOST=${MAIL_HOST:-smtp.qq.com}
+      - MAIL_PORT=${MAIL_PORT:-587}
+      - MAIL_USERNAME=${MAIL_USERNAME:-your-email@qq.com}
+      - MAIL_PASSWORD=${MAIL_PASSWORD:-your-email-password}
+      
+      # JVM参数
+      - JAVA_OPTS=${JAVA_OPTS:--Xms512m -Xmx1024m -XX:+UseG1GC -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -Xloggc:/app/data/log/gc.log}
+      
+      # 服务器端口
+      - SERVER_PORT=${SERVER_PORT:-8089}
+    volumes:
+      # 日志目录挂载
+      - ../data/log:/app/data/log
+      # 如果有配置文件需要挂载，可以添加
+      # - ./config:/app/config
+    networks:
+      - ecc-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${SERVER_PORT:-8089}/api/v1/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    # 资源限制
+    deploy:
+      resources:
+        limits:
+          memory: 1.5G
+          cpus: '1.0'
+        reservations:
+          memory: 512M
+          cpus: '0.5'
+
+networks:
+  ecc-network:
+    driver: bridge
+    name: ecc-network

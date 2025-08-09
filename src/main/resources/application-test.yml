@@ -1,0 +1,124 @@
+#file: noinspection SpringBootApplicationYaml
+server:
+  port: 8089
+  tomcat:
+    threads:
+      max: 200        # 设定处理客户请求的线程的最大数目，决定了服务器可以同时响应客户请求的数,默认200
+      min-spare: 50   # 初始化线程数,最小空闲线程数,默认是10
+    accept-count: 10  # 等待队列长度
+  servlet:
+    context-path: /api/${app.config.api-version}
+
+  # 应用配置 app.config.api-version
+app:
+  config:
+    # 版本，方便通过接口版本升级
+    api-version: v1
+    # 跨域，开发阶段可以设置为 * 不限制
+    cross-origin: '*'
+
+  # 线程池配置
+thread:
+  pool:
+    executor:
+      config:
+        core-pool-size: 20
+        max-pool-size: 50
+        keep-alive-time: 5000
+        block-queue-size: 5000
+        policy: CallerRunsPolicy
+
+
+spring:
+  # 数据库配置
+  datasource:
+    host: your_host
+    port: your_port
+    url: jdbc:mysql://${spring.datasource.host}:${spring.datasource.port}/test?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&serverTimezone=UTC&useSSL=false
+    username: root
+    password: your_password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  hikari:
+    pool-name: Retail_HikariCP
+    minimum-idle: 15 #最小空闲连接数量
+    idle-timeout: 180000 #空闲连接存活最大时间，默认600000（10分钟）
+    maximum-pool-size: 25 #连接池最大连接数，默认是10
+    auto-commit: true  #此属性控制从池返回的连接的默认自动提交行为,默认值：true
+    max-lifetime: 1800000 #此属性控制池中连接的最长生命周期，值0表示无限生命周期，默认1800000即30分钟
+    connection-timeout: 30000 #数据库连接超时时间,默认30秒，即30000
+    connection-test-query: SELECT 1
+  type: com.zaxxer.hikari.HikariDataSource
+
+  # Spring 配置；rabbitmq, 对于此项目，rabbitmq 可以没有，可注注释
+#  rabbitmq:
+#    addresses: your_ip_host
+#    port: your_port
+#    username: your_username
+#    password: your_password
+#    listener:
+#      simple:
+#        prefetch: 1 # 每次投递n个消息，消费完在投递n个
+#    topic:
+#      activity_sku_stock_zero: activity_sku_stock_zero
+
+io:
+  github:
+    wppli:
+      email:
+        software-name: Ecc-Test-Demo   # 这个改成你的应用名称
+        # 配置 SMTP 服务器地址
+        host: your_smtp_host
+        # 发送者邮箱
+        username: your_email   # 这个改成你的邮箱
+        # 配置密码，注意不是真正的密码，而是刚刚申请到的授权码
+        password: your_password  # 这个改成你的授权码
+        # 端口号465或587
+        port: 587
+        # 默认的邮件编码为UTF-8
+        default-encoding: UTF-8
+        # 配置SSL 加密工厂
+        properties: # 设置邮件超时时间防止服务器阻塞
+          timeout: 5000
+          connection-timeout: 5000
+          write-timeout: 5000
+          mail:
+            smtp:
+              socketFactoryClass: javax.net.ssl.SSLSocketFactory
+            #表示开启 DEBUG 模式，这样，邮件发送过程的日志会在控制台打印出来，方便排查错误
+            debug: true
+        subject: 动态验证码
+
+  # mybatis plus 配置
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  mapper-locations: classpath:mybatis/mapper/*.xml
+
+jq1024:
+  cc:
+    # redisson 配置
+    redisson:
+      host: your_host # 4-8
+      port: your_port
+      password: your_password
+      database: 4
+      pool-size: 10
+      min-idle-size: 5
+      idle-timeout: 30000
+      connect-timeout: 5000
+      retry-attempts: 3
+      retry-interval: 1000
+      ping-interval: 60000
+      keep-alive: true
+    # jwt token 配置
+    jwt:
+      issuer: ccf@guida_ljq_pwb
+      ttl: 86_400_000
+      secret-key: ccf@guida_ljq_pwb
+
+  # 日志
+logging:
+  level:
+    root: info
+  config: classpath:logback-spring.xml

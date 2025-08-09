@@ -1,0 +1,120 @@
+version: '3.8'
+
+services:
+  # MySQL数据库服务
+  mysql:
+    image: mysql:8.0
+    container_name: ecc-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: your_password
+      MYSQL_DATABASE: test
+      MYSQL_USER: ecc_user
+      MYSQL_PASSWORD: ecc_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ../mysql/ecc.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - ecc-network
+    command: --default-authentication-plugin=mysql_native_password
+
+  # Redis服务
+  redis:
+    image: redis:7-alpine
+    container_name: ecc-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - ecc-network
+    command: redis-server --appendonly yes --requirepass your_redis_password
+
+  # RabbitMQ服务（可选）
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: ecc-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin123
+    ports:
+      - "5672:5672"
+      - "15672:15672"  # 管理界面
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - ecc-network
+
+  # 应用服务
+  ecc-app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: ecc-server
+    restart: unless-stopped
+    user: "0:0"  # 以root用户启动，让entrypoint脚本处理权限
+    environment:
+      # Spring配置
+      SPRING_PROFILES_ACTIVE: dev
+      
+      # Jasypt加密密码
+      JASYPT_ENCRYPTOR_PASSWORD: lijiaqiang1024@wt1314520
+      
+      # 数据库配置
+      SPRING_DATASOURCE_HOST: mysql
+      SPRING_DATASOURCE_PORT: 3306
+      SPRING_DATASOURCE_DATABASE: test
+      SPRING_DATASOURCE_USERNAME: ecc_user
+      SPRING_DATASOURCE_PASSWORD: ecc_password
+      
+      # Redis配置
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: your_redis_password
+      
+      # RabbitMQ配置
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: admin
+      RABBITMQ_PASSWORD: admin123
+      
+      # 邮件配置（需要根据实际情况修改）
+      EMAIL_HOST: smtp.gmail.com
+      EMAIL_USERNAME: your_email@gmail.com
+      EMAIL_PASSWORD: your_app_password
+      EMAIL_PORT: 587
+      
+      # JVM参数
+      JAVA_OPTS: "-Xms512m -Xmx1024m -XX:+UseG1GC"
+    ports:
+      - "8089:8089"
+    volumes:
+      - ../data/log:/app/data/log
+    networks:
+      - ecc-network
+    depends_on:
+      - mysql
+      - redis
+      - rabbitmq
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8089/api/v1/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+volumes:
+  mysql_data:
+    driver: local
+  redis_data:
+    driver: local
+  rabbitmq_data:
+    driver: local
+
+networks:
+  ecc-network:
+    driver: bridge

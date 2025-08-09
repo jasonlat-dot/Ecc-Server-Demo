@@ -1,0 +1,60 @@
+# Maven构建目录（除了最终的jar文件）
+target/*
+!target/CeditWarning.jar
+
+# IDE文件
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.project
+.classpath
+
+# 版本控制
+.git/
+.gitignore
+
+# 日志文件
+*.log
+data/log/*
+
+# 临时文件
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# 操作系统文件
+.DS_Store
+Thumbs.db
+
+# Docker相关文件
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# 文档文件
+README.md
+*.md
+
+# 源代码（因为我们只需要编译后的jar文件）
+src/
+pom.xml
+
+# 测试文件
+test/
+
+# 配置文件模板
+*.example
+*.template
+
+# 备份文件
+*.bak
+*.backup
+
+# 缓存目录
+.cache/
+node_modules/
