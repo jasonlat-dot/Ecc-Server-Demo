@@ -222,11 +222,58 @@ deploy_production() {
         exit 1
     fi
     
-    # 使用生产环境配置部署
-    if docker-compose -f docker-compose.prod.yml up -d; then
+    # 检查是否有运行中的容器，如果有则停止并删除
+    echo -e "${GREEN}[信息] 检查并清理现有容器...${NC}"
+    
+    # 获取生产环境容器列表
+    local running_containers=$(docker-compose -f docker-compose.prod.yml ps -q 2>/dev/null || true)
+    
+    if [ ! -z "$running_containers" ]; then
+        echo -e "${YELLOW}[警告] 发现运行中的生产环境容器，正在停止...${NC}"
+        
+        # 停止容器
+        if docker-compose -f docker-compose.prod.yml stop; then
+            echo -e "${GREEN}[信息] 容器停止成功${NC}"
+        else
+            echo -e "${YELLOW}[警告] 容器停止失败，继续执行...${NC}"
+        fi
+        
+        # 删除容器
+        if docker-compose -f docker-compose.prod.yml rm -f; then
+            echo -e "${GREEN}[信息] 容器删除成功${NC}"
+        else
+            echo -e "${YELLOW}[警告] 容器删除失败，继续执行...${NC}"
+        fi
+    else
+        echo -e "${GREEN}[信息] 没有发现运行中的生产环境容器${NC}"
+    fi
+    
+    # 清理悬空镜像（可选）
+    echo -e "${GREEN}[信息] 清理悬空镜像...${NC}"
+    docker image prune -f >/dev/null 2>&1 || true
+    
+    # 强制重新构建并部署
+    echo -e "${GREEN}[信息] 重新构建并启动生产环境...${NC}"
+    if docker-compose -f docker-compose.prod.yml up -d --build --force-recreate; then
         echo -e "${GREEN}[完成] 生产环境部署成功！${NC}"
+        echo -e "${BLUE}[信息] 应用访问地址: http://localhost:8089/api/v1${NC}"
+        
+        # 等待几秒钟让容器完全启动
+        echo -e "${GREEN}[信息] 等待容器启动...${NC}"
+        sleep 5
+        
+        # 检查容器状态
+        echo -e "${GREEN}[信息] 检查容器状态...${NC}"
+        docker-compose -f docker-compose.prod.yml ps
+        
+        # 显示最近的日志
+        echo -e "${GREEN}[信息] 显示最近的应用日志...${NC}"
+        docker-compose -f docker-compose.prod.yml logs --tail=20 ecc-app
+        
     else
         echo -e "${RED}[错误] 生产环境部署失败${NC}"
+        echo -e "${YELLOW}[提示] 查看详细错误信息:${NC}"
+        echo "  docker-compose -f docker-compose.prod.yml logs"
         exit 1
     fi
 }

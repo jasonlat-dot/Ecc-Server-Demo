@@ -37,7 +37,7 @@ docker-compose*.yml
 .dockerignore
 
 # 文档文件
-README.md
+../README.md
 *.md
 
 # 源代码（因为我们只需要编译后的jar文件）

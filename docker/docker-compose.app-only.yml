@@ -56,17 +56,12 @@ services:
     networks:
       - ecc-network
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${SERVER_PORT:-8089}/api/v1/actuator/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
+
     # 资源限制
     deploy:
       resources:
         limits:
-          memory: 1.5G
+          memory: 1G
           cpus: '1.0'
         reservations:
           memory: 512M

@@ -35,6 +35,6 @@ EXPOSE 8089 8090
 # 使用自定义启动脚本
 ENTRYPOINT ["/entrypoint.sh"]
 
-# 健康检查
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:${SERVER_PORT:-8089}/api/v1/actuator/health || exit 1
+## 健康检查
+#HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+#    CMD wget --no-verbose --tries=1 --spider http://localhost:${SERVER_PORT:-8089}/api/v1/actuator/health || exit 1

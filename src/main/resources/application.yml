@@ -2,7 +2,7 @@
 #file: noinspection SpringBootApplicationYaml
 spring:
   profiles:
-    active: dev
+    active: prod
 
 # LINUX
 # export JASYPT_ENCRYPTOR_PASSWORD=course-push-secret-key

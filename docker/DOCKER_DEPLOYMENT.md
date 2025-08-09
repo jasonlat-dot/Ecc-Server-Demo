@@ -1,4 +1,4 @@
-# ECC Server Demo Docker 部署指南
+# ECC Server Demo Docker 详细部署指南
 
 本文档详细说明如何使用Docker部署ECC Server Demo项目。
 
@@ -21,7 +21,7 @@
 - **Docker Compose 1.29+** - 用于多容器编排
 
 ### 系统要求
-- **内存**: 最少4GB，推荐8GB+
+- **内存**: 最少4GB
 - **磁盘空间**: 最少2GB可用空间
 - **网络**: 需要访问Docker Hub和Maven仓库
 
