@@ -1,3 +1,0 @@
-25-08-10.07:44:07.438 [http-nio-8090-exec-3] ERROR ControllerExceptionHandler - userDataService.getCurrentUserId() return userId is empty, can't authenticate
-25-08-10.08:11:07.284 [http-nio-8090-exec-2] ERROR ControllerExceptionHandler - Handler dispatch failed; nested exception is java.lang.AbstractMethodError: io.github.jasonlat.app.config.CustomEccConfiguration$1.getCurrentUser()Ljava/lang/String;
-25-08-10.08:34:23.092 [http-nio-8090-exec-3] ERROR ControllerExceptionHandler - Handler dispatch failed; nested exception is java.lang.AbstractMethodError: io.github.jasonlat.app.config.CustomEccConfiguration$1.getCurrentUser()Ljava/lang/String;

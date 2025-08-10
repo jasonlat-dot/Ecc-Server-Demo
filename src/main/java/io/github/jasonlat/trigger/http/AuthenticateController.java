@@ -215,7 +215,7 @@ public class AuthenticateController {
 
 
     @RequestMapping(value = "verifyToken", method = RequestMethod.POST)
-    public Response<Boolean> verifyToken(@Header("Authorization") String userToken) {
+    public Response<Boolean> verifyToken(@RequestHeader(value = "Authorization") String userToken) {
         try {
             String simpleUUID = userToken.replace("Bearer ", "");
             boolean result = authenticateService.verifyToken(simpleUUID);
