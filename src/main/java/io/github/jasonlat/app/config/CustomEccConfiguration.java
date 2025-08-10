@@ -48,7 +48,7 @@ public class CustomEccConfiguration {
             }
 
             @Override
-            public String getCurrentUserId() {
+            public String getCurrentUser() {
                 log.info("getCurrentUserId");
                 // 0. 优先从 security 中获取
                 try {

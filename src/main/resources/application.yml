@@ -2,7 +2,7 @@
 #file: noinspection SpringBootApplicationYaml
 spring:
   profiles:
-    active: prod
+    active: dev
 
 # LINUX
 # export JASYPT_ENCRYPTOR_PASSWORD=course-push-secret-key
@@ -18,9 +18,9 @@ jasonlat:
     enabled: true
 
     # ECC密钥配置（请替换为您的实际密钥）
-    privateKey: be38fba57a90bcdbd59cdba9df58e511d0105f4e400bec872448be3202e7eaf8
-    publicKeyX: d13d9de5d2cf7578aa427a73eca23aa6335baa2f218c433a972501f42a760e1a
-    publicKeyY: cae8c8fc121bf4f7a4310a7273364b15af5bff70dd1bf603124f8f8f25207c84
+    privateKey:
+    publicKeyX:
+    publicKeyY:
 
     # 用户上下文缓存配置
     user-context-cache:

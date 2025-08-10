@@ -10,7 +10,7 @@ public class RegisterRequest {
     /**
      * 邮箱 - 用户名
      */
-    private String email;
+    private String username;
 
     /**
      * 密码

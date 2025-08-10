@@ -163,7 +163,7 @@ public class AuthenticateController {
         try {
             log.debug("UserAuthenticateController.register 开始注册: {}", registerRequest.toString());
             // 参数校验
-            if (StringUtils.isAnyBlank(registerRequest.getEmail(), registerRequest.getPassword(),
+            if (StringUtils.isAnyBlank(registerRequest.getUsername(), registerRequest.getPassword(),
                     registerRequest.getConfirmPassword(), registerRequest.getVerificationCode(),
                     registerRequest.getUserPublicX(), registerRequest.getUserPublicY())) {
                 log.warn("register 参数异常");
@@ -171,7 +171,7 @@ public class AuthenticateController {
             }
             // 业务
             // 0. 校验验证码
-            authenticateService.verifyCode(registerRequest.getEmail(), registerRequest.getVerificationCode());
+            authenticateService.verifyCode(registerRequest.getUsername(), registerRequest.getVerificationCode());
             if (!registerRequest.getPassword().equals(registerRequest.getConfirmPassword())) {
                 log.warn("两次输入的密码不一致");
                 throw new IllegalArgumentException("两次输入的密码不一致");
@@ -181,9 +181,9 @@ public class AuthenticateController {
                 log.warn("密码必须包含数字和大小写英文字符，且长度至少为8位");
                 throw new IllegalArgumentException("密码必须包含数字和大小写英文字符，且长度至少为8位");
             }
-            accountService.verifyAccountExist(registerRequest.getEmail());
+            accountService.verifyAccountExist(registerRequest.getUsername());
             // 2. 进行注册
-            Long userId = accountService.register(registerRequest.getEmail(), registerRequest.getPassword());
+            Long userId = accountService.register(registerRequest.getUsername(), registerRequest.getPassword());
             // 3. 保存公钥
             accountService.saveUserPublicKey(userId, registerRequest.getUserPublicX(), registerRequest.getUserPublicY());
             // 返回结果
